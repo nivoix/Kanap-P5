@@ -1,16 +1,26 @@
-// On fetch sur l'url
+//recuperer les articles
 fetch("http://localhost:3000/api/products")
-  // On transforme les data en Json
   .then((res) => res.json())
-  // On peut utiliser les data
   .then((data) => {
-    // regarder ce qu'on reçoit pour bien cibler l'objet
-    // Ici je veut qu'un seul user, donc j'envoie [0] pour le 1er user
-    console.log(data);
+    //construire l'html avec une boucle pour les 8 articles
+    let change = ``
+    for(let article of data){
+      change += `
+        <a href="./product.html?id=${article._id}">
+        <article>
+          <img src="${article.imageUrl}" alt="${article.altTxt}">
+          <h3 class="productName">${article.name}</h3>
+          <p class="productDescription">${article.description}</p>
+        </article>
+      </a>`
+    }
+    //injecter l'html dans le dom
+    document.querySelector('#items').innerHTML = change
+    console.log("document.querySelector('#items')");
   })
-  // Gestion d'erreur IMPORTANT
   .catch((error) => {
-    // Si erreur dans URL, retourne l'erreur pour pas bloquer la création de la page
     return error;
     // OU mieux : créer une fonction qui affiche l'erreur dans une modal, un coin du site...
   });
+
+
