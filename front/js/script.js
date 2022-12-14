@@ -16,7 +16,6 @@ fetch("http://localhost:3000/api/products")
     }
     //injecter l'html dans le dom
     document.querySelector('#items').innerHTML = change
-    console.log("document.querySelector('#items')");
   })
   .catch((error) => {
     return error;
