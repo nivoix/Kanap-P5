@@ -39,13 +39,14 @@ document.getElementById('addToCart').addEventListener('click', () => {
 function checkInput () {
     let colorChoice = document.getElementById('colors').value
     if(colorChoice === "") {
-        console.log('choisissez une couleur');
+        let alertColor = `<div style="color:red;font-size:16px; font-weight:bold">CHOISISSEZ UNE COULEUR</div>`
+        document.querySelector(".item__content__settings__color").innerHTML  += alertColor;
     }
-    console.log(colorChoice);
-
+    
     let quantity = document.getElementById('quantity').value
     if(quantity < 1 || quantity >99) {
-        console.log('veuillez saisir une bonne quantité entre 1 et 100')
+        let alertQuantity = `<div style="color:red;font-size:16px; font-weight:bold">Veuillez saisir une quantité entre 1 et 99</div>`
+        document.querySelector(".item__content__settings__quantity").innerHTML  += alertQuantity;
     }
     console.log(quantity);
     if (colorChoice != "" && quantity >= 1 && quantity < 100) {
@@ -54,10 +55,12 @@ function checkInput () {
     }
 }
 
+//enregistrer le panier
 function saveBasket(basket) {
     localStorage.setItem("basket", JSON.stringify(basket));
 }
 
+//récuperer le panier
 function getBasket() {
     let basket = localStorage.getItem("basket");
     if (basket == null) {
@@ -66,6 +69,7 @@ function getBasket() {
         return JSON.parse(basket)
     }
 }
+//Ajout de produits dans LS
 function addToLocalStorage (productChoice) {
     let basket = getBasket();
     basket.push(productChoice);
