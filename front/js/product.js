@@ -3,10 +3,7 @@ const queryString_url_id = window.location.search;
 
 // extraire id
 const urlSearchParams = new URLSearchParams(queryString_url_id);
-
 const id = urlSearchParams.get("id");
-
-
 
 // récuperation de l'article
 fetch(`http://localhost:3000/api/products/${id}`)
@@ -21,8 +18,7 @@ fetch(`http://localhost:3000/api/products/${id}`)
         document.querySelector('#description').innerHTML = `<p id="description">${data.description}</p>`
         
         for(let color of data.colors) {
-            document.getElementById("colors").innerHTML  += `
-            <option value="${color}">${color}</option>` 
+            document.getElementById("colors").innerHTML  += `<option value="${color}">${color}</option>` 
         }     
     })
     .catch((error) => {
@@ -48,7 +44,7 @@ function checkInput () {
         let alertQuantity = `<div style="color:red;font-size:16px; font-weight:bold">Veuillez saisir une quantité entre 1 et 99</div>`
         document.querySelector(".item__content__settings__quantity").innerHTML  += alertQuantity;
     }
-    console.log(quantity);
+    
     if (colorChoice != "" && quantity >= 1 && quantity < 100) {
         let productChoice = [id, colorChoice, quantity]
         addToLocalStorage(productChoice)
@@ -72,7 +68,13 @@ function getBasket() {
 //Ajout de produits dans LS
 function addToLocalStorage (productChoice) {
     let basket = getBasket();
-    basket.push(productChoice);
+    let foundProduct = basket.find((i => i[0] == productChoice[0]) && (c => c[1] == productChoice[1]));
+    if(foundProduct != undefined) {
+        foundProduct[2]++;
+    }else{
+        productChoice[2] = 1;
+        basket.push(productChoice);
+    }
     saveBasket(basket);
 }
 
