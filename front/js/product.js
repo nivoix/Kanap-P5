@@ -47,34 +47,36 @@ function checkInput () {
     
     if (colorChoice != "" && quantity >= 1 && quantity < 100) {
         let productChoice = [id, colorChoice, quantity]
+        console.log(quantity);
         addToLocalStorage(productChoice)
+        
     }
 }
 
 //enregistrer le panier
-function saveBasket(basket) {
-    localStorage.setItem("basket", JSON.stringify(basket));
+function saveBasket(product) {
+    localStorage.setItem("basket", JSON.stringify(product));
 }
 
 //récuperer le panier
 function getBasket() {
-    let basket = localStorage.getItem("basket");
-    if (basket == null) {
+    let product = localStorage.getItem("basket");
+    if (product == null) {
         return [];
     }else{
-        return JSON.parse(basket)
+        return JSON.parse(product)
     }
 }
 //Ajout de produits dans LS
 function addToLocalStorage (productChoice) {
-    let basket = getBasket();
-    let foundProduct = basket.find((i => i[0] == productChoice[0]) && (c => c[1] == productChoice[1]));
-    if(foundProduct != undefined) {
-        foundProduct[2]++;
+    let product = getBasket();
+    let quantity = document.getElementById('quantity').value
+    let foundProduct = product.find((i => i[0] == productChoice[0]) && (c => c[1] == productChoice[1]));
+    if(foundProduct != undefined ) {
+        foundProduct[2] = parseInt(quantity) + parseInt(foundProduct[2]);
     }else{
-        productChoice[2] = 1;
-        basket.push(productChoice);
+        productChoice[2] = quantity;
+        product.push(productChoice);
     }
-    saveBasket(basket);
+    saveBasket(product);
 }
-
