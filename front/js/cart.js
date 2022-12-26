@@ -1,14 +1,24 @@
-getBasket("basket");
+// récupérer le panier
+const basket = JSON.parse(localStorage.getItem("basket"));
+console.log(basket);
 
-//récuperer le panier
-function getBasket(productChoice) {
-    let basket = localStorage.getItem("basket");
+
+
+
+
+
+
+
+
+
     
-    if (basket == null) {
-        return [];
-    }else{
-        return JSON.parse(basket)
-        console.log(basket)
-    }
-}
+
+    
+    
+        
+    
+    
+
+    
+
 
