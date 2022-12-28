@@ -5,7 +5,7 @@ const queryString_url_id = window.location.search;
 const urlSearchParams = new URLSearchParams(queryString_url_id);
 const id = urlSearchParams.get("id");
 
-// récuperation de l'article
+// récuperation des infos de l'article suivant son id
 fetch(`http://localhost:3000/api/products/${id}`)
     .then((res) => res.json())
         
@@ -25,17 +25,20 @@ fetch(`http://localhost:3000/api/products/${id}`)
         return error;
     });
 
+//création de la div pour le message d'alerte si pas de couleur
 let alertColor = `<div id="alertColor" style="color:red;font-size:16px; font-weight:bold"></div>`
 document.querySelector(".item__content__settings__color").innerHTML  += alertColor;
 
+//création de la div pour le message d'alerte si pas de quantité
 let alertQuantity = `<div  id="alertQuantity" style="color:red;font-size:16px; font-weight:bold"></div>`
-        document.querySelector(".item__content__settings__quantity").innerHTML  += alertQuantity;
+document.querySelector(".item__content__settings__quantity").innerHTML  += alertQuantity;
+
+// récup infos de saisie
 document.getElementById('addToCart').addEventListener('click', () => {
     checkInput ()
-        
 })
 
-// récup infos de saisie et verif des éléments saisis
+// verif des éléments saisis
 function checkInput () {
     let colorChoice = document.getElementById('colors').value
     if(colorChoice === "") {
@@ -57,7 +60,6 @@ function checkInput () {
             colorChoice: colorChoice,
             quantity: quantity
         }
-        console.log(quantity);
         addToLocalStorage(productChoice)
         
     }
