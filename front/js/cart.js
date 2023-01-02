@@ -53,7 +53,7 @@ fetch(`http://localhost:3000/api/products`)
             }
         }
     }
-    // changement de quantité 
+// changement de quantité 
     let lastQuantity =  document.querySelectorAll(".itemQuantity");
     console.log(lastQuantity);
     for(let v = 0; v < lastQuantity.length; v++){
@@ -63,18 +63,21 @@ fetch(`http://localhost:3000/api/products`)
                 console.log(e.target.value);
                 let eArticle = lastQuantity[v].closest("article");
                 let eId = eArticle.getAttribute("data-id");
-                console.log(eId);
+                //console.log(eId);
                 let eColor = eArticle.getAttribute("data-color");
-                console.log(eColor);
+                //console.log(eColor);
                 let product = {
                     id: eId,
                     colorChoice: eColor,
                     quantity: e.target.value
                 }
-                console.log(product);
+                //console.log(product);
                 addToLocalStorage(product);
+                location.reload();
             });
     }
+let totalQuantity = document.getElementById('totalQuantity');
+totalQuantity.textContent = totalQuantityFromBasket ();    
 })
 
 //Ajout de produits dans LS
@@ -91,8 +94,15 @@ function addToLocalStorage(product) {
     }
     saveBasket(basket);
 }
-    
-    
+// quantit total de produit  
+function totalQuantityFromBasket () {
+    let basket = getBasket();
+    let number = 0;
+    for (let product of basket) {
+        number += parseInt(product.quantity);
+    }
+    return number;
+}   
   
 
 
