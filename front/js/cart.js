@@ -91,12 +91,14 @@ function removeProduct () {
 function deleteFromBasket(product) {
             let basket = getBasket();
             basket = basket.filter(d => (d.id != product.id) || (d.colorChoice != product.colorChoice))
-            console.log(basket);
-            if(product = []){
-                localStorage.removeItem('basket');
-            }
-            location.reload();
             saveBasket(basket);
+            if(basket.length != 0){
+                location.reload();
+            }else{
+                localStorage.removeItem('basket');
+                location.reload();
+            }
+            
 }
    
 fetch(`http://localhost:3000/api/products`)

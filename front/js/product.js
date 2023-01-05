@@ -48,49 +48,50 @@ function checkInput () {
     }
     
     let quantity = document.getElementById('quantity').value
-    if(quantity < 1 || quantity >99) {
+    if(quantity < 1 || quantity > 100) {
         document.getElementById('alertQuantity').innerHTML = 'Veuillez saisir une quantité entre 1 et 99';
-    }else if (quantity >= 1 && quantity < 100){
+    }else if (quantity >= 1 && quantity <= 100){
         document.getElementById('alertQuantity').innerHTML = ''
     }
     
-    if (colorChoice != "" && quantity >= 1 && quantity < 100) {
+    if (colorChoice != "" && quantity >= 1 && quantity <= 100) {
         let productChoice = {
             id: id, 
             colorChoice: colorChoice,
             quantity: quantity
         }
         addToLocalStorage(productChoice)
-        
     }
 }
 
 //enregistrer le panier
-function saveBasket(product) {
-    localStorage.setItem("basket", JSON.stringify(product));
+function saveBasket(basket) {
+    localStorage.setItem("basket", JSON.stringify(basket));
 }
 
 //récuperer le panier
 function getBasket() {
-    let product = localStorage.getItem("basket");
-    if (product == null) {
+    let basket = localStorage.getItem("basket");
+    if (basket == null) {
         return [];
     }else{
-        return JSON.parse(product)
+        return JSON.parse(basket)
     }
 }
 //Ajout de produits dans LS
 function addToLocalStorage (productChoice) {
-    let product = getBasket();
+    let basket = getBasket();
     let quantity = document.getElementById('quantity').value
-    let foundProductIndex = product.findIndex((i) => i.id === id && i.colorChoice === productChoice.colorChoice);
+    let foundProductIndex = basket.findIndex((i) => i.id === id && i.colorChoice === productChoice.colorChoice);
+    
     console.log(foundProductIndex);
     if(foundProductIndex === -1) {
-       
-       product.push(productChoice)
-    }else{
-        product[foundProductIndex].quantity = parseInt(quantity) + parseInt(productChoice.quantity);
+        basket.push(productChoice)
         
+    }else if((parseInt(quantity) + parseInt(basket[foundProductIndex].quantity)) > 100){
+        document.getElementById('alertQuantity').innerHTML = `Veuillez saisir une quantité totale inférieure à 100, vous avez déjà ${(basket[foundProductIndex].quantity)} articles dans votre panier`;
+    }else{    
+        basket[foundProductIndex].quantity = parseInt(quantity) + parseInt(basket[foundProductIndex].quantity);
     }
-    saveBasket(product);
+    saveBasket(basket);
 }
