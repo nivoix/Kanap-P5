@@ -19,7 +19,4 @@ fetch("http://localhost:3000/api/products")
   })
   .catch((error) => {
     return error;
-    // OU mieux : créer une fonction qui affiche l'erreur dans une modal, un coin du site...
   });
-
-

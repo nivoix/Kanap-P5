@@ -13,9 +13,6 @@ function getBasket() {
 function saveBasket(basket) {
     localStorage.setItem("basket", JSON.stringify(basket));
 }
-
-
-
 // changement de quantité d'un produit
 function changeQuantity(){
     let lastQuantity =  document.querySelectorAll(".itemQuantity");
@@ -55,7 +52,6 @@ function totalQuantityFromBasket () {
         totalQuantity.textContent = number;
     }
 }
-
 // prix total du panier
 function totalPriceFromBasket () {
     let basket = getBasket();
@@ -82,25 +78,22 @@ function removeProduct () {
                 id: eId,
                 colorChoice: eColor,
             }
-            deleteFromBasket(product)    
+            deleteFromBasket(product)
         })
     }
 }
-
 //suppression de produits dans LS
 function deleteFromBasket(product) {
             let basket = getBasket();
             basket = basket.filter(d => (d.id != product.id) || (d.colorChoice != product.colorChoice))
             saveBasket(basket);
             if(basket.length != 0){
-                location.reload();
+                location.reload()
             }else{
                 localStorage.removeItem('basket');
-                location.reload();
-            }
-            
+                location.reload()
+            }     
 }
-   
 fetch(`http://localhost:3000/api/products`)
 .then((res) => res.json())
 .then((data) => {
@@ -142,4 +135,55 @@ fetch(`http://localhost:3000/api/products`)
     totalPriceFromBasket();
 // sup product
     removeProduct();
+});
+
+//*****************************************formulaire ************************************/
+
+// sélection du bouton envoyer le formulaire
+const btnsendform = document.getElementById("order");
+
+btnsendform.addEventListener('click', (e) => {
+    e.preventDefault();
+// récupérer les valeurs du formulaire
+const formulaireValues = {
+    firstName : document.querySelector("#firstName").value,
+    lastName : document.querySelector("#lastName").value,
+    address : document.querySelector("#address").value,
+    city : document.querySelector("#city").value,
+    email : document.querySelector("#email").value
+}
+
+// controle des infos du formulaire
+
+
+// envoyer dans le LS
+localStorage.setItem("formulaireValues", JSON.stringify(formulaireValues));
+
+
+
+
+
+
+
+// variable contenant le panier et le formulaire à envoyer pour la commande
+const sendCommande = {
+    basket,
+    formulaireValues
+}
+console.log("sendCommande");
+console.log(sendCommande);
 })
+
+//recuperer les infos du formulaire dans le LS
+const getForm = localStorage.getItem("formulaireValues");
+const getFormObjet = JSON.parse(getForm);
+
+//mettre les infos dans le formulaire
+function fillForm (input) {
+    document.querySelector(`#${input}`).value = getFormObjet[input];
+}
+fillForm('firstName');
+fillForm('lastName');
+fillForm('address');
+fillForm('city');
+fillForm('email');
