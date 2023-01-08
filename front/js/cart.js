@@ -138,46 +138,87 @@ fetch(`http://localhost:3000/api/products`)
 });
 
 //*****************************************formulaire ************************************/
-
 // sélection du bouton envoyer le formulaire
 const btnsendform = document.getElementById("order");
 
 btnsendform.addEventListener('click', (e) => {
     e.preventDefault();
-// récupérer les valeurs du formulaire
-const formulaireValues = {
-    firstName : document.querySelector("#firstName").value,
-    lastName : document.querySelector("#lastName").value,
-    address : document.querySelector("#address").value,
-    city : document.querySelector("#city").value,
-    email : document.querySelector("#email").value
-}
+    // récupérer les valeurs du formulaire
+    const formulaireValues = {
+        firstName : document.querySelector("#firstName").value,
+        lastName : document.querySelector("#lastName").value,
+        address : document.querySelector("#address").value,
+        city : document.querySelector("#city").value,
+        email : document.querySelector("#email").value
+    }
+    // controle des infos du formulaire
+    function checkprenom () {
+        const firstName = formulaireValues.firstName;
+        if(/^[a-zA-ZÀ-ÿœ\,\'\.\ \-]{3,15}$/.test(firstName)) {
+            document.getElementById('firstNameErrorMsg').textContent = ""
+            return true;
+        }else{
+            document.getElementById('firstNameErrorMsg').textContent = `Les chiffes et symboles sont interdits.Maximum 15 caractères, minimum 3 caractères`
+            return false;
+        }
+    }
+    function checknom () {
+        const lastName = formulaireValues.lastName;
+        if(/^[a-zA-ZÀ-ÿœ\,\'\.\ \-]{2,30}$/.test(lastName)) {
+            document.getElementById('lastNameErrorMsg').textContent = ""
+            return true;
+        }else{
+            document.getElementById('lastNameErrorMsg').textContent = `Les chiffes et symboles sont interdits.Maximum 30 caractères, minimum 2 caractères`
+            return false;
+        }
+    }
+    function checkaddress () {
+        const address = formulaireValues.address;
+        if(/^([0-9a-zA-ZÀ-ÿœ\,\-\'\.\ ]*)$/.test(address) && (address !="")) {
+            document.getElementById('addressErrorMsg').textContent = ""
+            return true;
+        }else{
+            document.getElementById('addressErrorMsg').textContent = `Les caractères spéciaux sont interdits.`
+            return false;
+        }
+    }
+    function checkcity () {
+        const city = formulaireValues.city;
+        if(/^([a-zA-ZÀ-ÿœ\,\-\'\.\ ]*){1,45}$/.test(city) && (city !="")) {
+            document.getElementById('cityErrorMsg').textContent = ""
+            return true;
+        }else{
+            document.getElementById('cityErrorMsg').textContent = `Les chiffres et caractères spéciaux sont interdits.`
+            return false;
+        }
+    }
+    function checkemail () {
+        const email = formulaireValues.email;
+        if(/^[a-zA-Z0-9_.+-]+@[a-zA-Z]+\.[a-z]{2,4}$/.test(email)) {
+            document.getElementById('emailErrorMsg').textContent = ""
+            return true;
+        }else{
+            document.getElementById('emailErrorMsg').textContent = `Veuillez indiquer une adresse email valide`
+            return false;
+        }
+    }
+    if(checkprenom() && checknom() && checkaddress() && checkcity() && checkemail ()) {
+    // envoyer dans le LS si formulaire valide
+        localStorage.setItem("formulaireValues", JSON.stringify(formulaireValues));
+    }
+    // variable contenant le panier et le formulaire à envoyer pour la commande
+    const sendCommande = {
+        basket,
+        formulaireValues
+    }
+    console.log("sendCommande");
+    console.log(sendCommande);
 
-// controle des infos du formulaire
-
-
-// envoyer dans le LS
-localStorage.setItem("formulaireValues", JSON.stringify(formulaireValues));
-
-
-
-
-
-
-
-// variable contenant le panier et le formulaire à envoyer pour la commande
-const sendCommande = {
-    basket,
-    formulaireValues
-}
-console.log("sendCommande");
-console.log(sendCommande);
 })
 
 //recuperer les infos du formulaire dans le LS
 const getForm = localStorage.getItem("formulaireValues");
 const getFormObjet = JSON.parse(getForm);
-
 //mettre les infos dans le formulaire
 function fillForm (input) {
     document.querySelector(`#${input}`).value = getFormObjet[input];
