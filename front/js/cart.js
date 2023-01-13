@@ -216,7 +216,7 @@ btnsendform.addEventListener('click', (e) => {
 
 })
 
-//recuperer les infos du formulaire dans le LS
+/* //recuperer les infos du formulaire dans le LS
 const getForm = localStorage.getItem("formulaireValues");
 const getFormObjet = JSON.parse(getForm);
 //mettre les infos dans le formulaire
@@ -227,4 +227,4 @@ fillForm('firstName');
 fillForm('lastName');
 fillForm('address');
 fillForm('city');
-fillForm('email');
+fillForm('email'); */
