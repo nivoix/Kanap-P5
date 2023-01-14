@@ -13,7 +13,8 @@ fetch(`http://localhost:3000/api/products/${id}`)
         document.querySelector('#description').innerHTML = `<p id="description">${data.description}</p>`
         for(let color of data.colors) {
             document.getElementById("colors").innerHTML  += `<option value="${color}">${color}</option>` 
-        }     
+        }
+        document.querySelector("title").textContent = data.name;
     })
     .catch((error) => {
         return error;

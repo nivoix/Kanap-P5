@@ -216,18 +216,21 @@ btnsendform.addEventListener('click', (e) => {
     function checkFormulaire () {
         if(checkprenom () && checknom () && checkaddress () && checkcity() && checkemail ()) {
             localStorage.setItem("contact", JSON.stringify(contact));
+            return true
         }else{
             alert('Vous avez une erreur dans le formalaire')
+            return false
         }
     }
     checkprenom ();
     checknom ();
     checkaddress ();
     checkcity ();
-    checkemail ();    
-    checkFormulaire ();
+    checkemail ();
+    checkFormulaire ()
     // panier des id de chaque produit choisit
     let products = []
+
     if(basket != undefined){
         for (c = 0; c < basket.length; c++){
             products.push(basket[c].id)
@@ -240,19 +243,23 @@ btnsendform.addEventListener('click', (e) => {
         products,
         contact
     }
-    
+    if(basket != undefined && checkFormulaire () ){
+        sendOrder()
+        console.log(products.length);
+    }
     //envoi des données à l'API
-    fetch("http://localhost:3000/api/products/order",{
-        method: "POST",
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(order),
-    })
+    function sendOrder () {
+        fetch("http://localhost:3000/api/products/order",{
+            method: "POST",
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(order),
+        })
         .then((res) => res.json())
         .then((data) => {
-            //redirection vers la page confirmation
+          //redirection vers la page confirmation
             document.location.href = `confirmation.html?orderId=${data.orderId}`;
         console.log(data.orderId)
         })
@@ -260,19 +267,14 @@ btnsendform.addEventListener('click', (e) => {
             alert("Un problème a été rencontré lors de l'envoi de la commande");
             return error;
         });
+    }
 })
 
 
-
-
-
-
-
-
-
-/* //recuperer les infos du formulaire dans le LS
-const getForm = localStorage.getItem("formulaireValues");
+//recuperer les infos du formulaire dans le LS
+const getForm = localStorage.getItem("contact");
 const getFormObjet = JSON.parse(getForm);
+console.log(getFormObjet);
 //mettre les infos dans le formulaire
 function fillForm (input) {
     document.querySelector(`#${input}`).value = getFormObjet[input];
@@ -281,4 +283,4 @@ fillForm('firstName');
 fillForm('lastName');
 fillForm('address');
 fillForm('city');
-fillForm('email'); */
+fillForm('email');
