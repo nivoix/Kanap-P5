@@ -140,81 +140,135 @@ fetch(`http://localhost:3000/api/products`)
 //*****************************************formulaire ************************************/
 // sélection du bouton envoyer le formulaire
 const btnsendform = document.getElementById("order");
-
 btnsendform.addEventListener('click', (e) => {
     e.preventDefault();
     // récupérer les valeurs du formulaire
-    const formulaireValues = {
+    const contact = {
         firstName : document.querySelector("#firstName").value,
         lastName : document.querySelector("#lastName").value,
         address : document.querySelector("#address").value,
         city : document.querySelector("#city").value,
         email : document.querySelector("#email").value
     }
+    
     // controle des infos du formulaire
+    regexprenom= /^([^ ])(([A-Za-zÀ-ÿœ]{2,40})?(['.\ -]{0,5}))*$/;
+    msgprenom = "Les chiffes et symboles sont interdits.Maximum 40 caractères, minimum 3 caractères";
+    regexnom= /^([^ ])(([a-zA-ZÀ-ÿœ\,\'\.\ \-]{2,30}))*$/;
+    msgnom = `Les chiffes et symboles sont interdits.Maximum 30 caractères, minimum 2 caractères`;
+    regexaddress= /^([^ ])([0-9a-zA-ZÀ-ÿœ\,\-\'\.\ ]*)$/;
+    msgaddress = `Les caractères spéciaux sont interdits.`;
+    regexcity= /^([^ ])([a-zA-ZÀ-ÿœ\,\-\'\.\ ]*){1,45}$/;
+    msgcity = `Les chiffres et caractères spéciaux sont interdits.`;
+    regexemail= /^([^ ])[a-zA-Z0-9_.+-]+@[a-zA-Z]+\.[a-z]{2,4}$/;
+    msgemail = `Veuillez indiquer une adresse email valide`;
     function checkprenom () {
-        const firstName = formulaireValues.firstName;
-        if(/^[a-zA-ZÀ-ÿœ\,\'\.\ \-]{3,15}$/.test(firstName)) {
+        const firstName = contact.firstName;
+        if(regexprenom.test(firstName)) {
             document.getElementById('firstNameErrorMsg').textContent = ""
             return true;
         }else{
-            document.getElementById('firstNameErrorMsg').textContent = `Les chiffes et symboles sont interdits.Maximum 15 caractères, minimum 3 caractères`
+            document.getElementById('firstNameErrorMsg').textContent = msgprenom
             return false;
         }
     }
     function checknom () {
-        const lastName = formulaireValues.lastName;
-        if(/^[a-zA-ZÀ-ÿœ\,\'\.\ \-]{2,30}$/.test(lastName)) {
+        const lastName = contact.lastName;
+        if(regexnom.test(lastName)) {
             document.getElementById('lastNameErrorMsg').textContent = ""
             return true;
         }else{
-            document.getElementById('lastNameErrorMsg').textContent = `Les chiffes et symboles sont interdits.Maximum 30 caractères, minimum 2 caractères`
+            document.getElementById('lastNameErrorMsg').textContent = msgnom;
             return false;
         }
     }
     function checkaddress () {
-        const address = formulaireValues.address;
-        if(/^([0-9a-zA-ZÀ-ÿœ\,\-\'\.\ ]*)$/.test(address) && (address !="")) {
+        const address = contact.address;
+        if(regexaddress.test(address) && (address !="")) {
             document.getElementById('addressErrorMsg').textContent = ""
             return true;
         }else{
-            document.getElementById('addressErrorMsg').textContent = `Les caractères spéciaux sont interdits.`
+            document.getElementById('addressErrorMsg').textContent = msgaddress;
             return false;
         }
     }
     function checkcity () {
-        const city = formulaireValues.city;
-        if(/^([a-zA-ZÀ-ÿœ\,\-\'\.\ ]*){1,45}$/.test(city) && (city !="")) {
+        const city = contact.city;
+        if(regexcity.test(city) && (city !="")) {
             document.getElementById('cityErrorMsg').textContent = ""
             return true;
         }else{
-            document.getElementById('cityErrorMsg').textContent = `Les chiffres et caractères spéciaux sont interdits.`
+            document.getElementById('cityErrorMsg').textContent = msgcity
             return false;
         }
     }
     function checkemail () {
-        const email = formulaireValues.email;
-        if(/^[a-zA-Z0-9_.+-]+@[a-zA-Z]+\.[a-z]{2,4}$/.test(email)) {
+        const email = contact.email;
+        if(regexemail.test(email)) {
             document.getElementById('emailErrorMsg').textContent = ""
             return true;
         }else{
-            document.getElementById('emailErrorMsg').textContent = `Veuillez indiquer une adresse email valide`
+            document.getElementById('emailErrorMsg').textContent = msgemail;
             return false;
         }
     }
-    if(checkprenom() && checknom() && checkaddress() && checkcity() && checkemail ()) {
     // envoyer dans le LS si formulaire valide
-        localStorage.setItem("formulaireValues", JSON.stringify(formulaireValues));
+    function checkFormulaire () {
+        if(checkprenom () && checknom () && checkaddress () && checkcity() && checkemail ()) {
+            localStorage.setItem("contact", JSON.stringify(contact));
+        }else{
+            alert('Vous avez une erreur dans le formalaire')
+        }
+    }
+    checkprenom ();
+    checknom ();
+    checkaddress ();
+    checkcity ();
+    checkemail ();    
+    checkFormulaire ();
+    // panier des id de chaque produit choisit
+    let products = []
+    if(basket != undefined){
+        for (c = 0; c < basket.length; c++){
+            products.push(basket[c].id)
+        }
+    }else{
+        alert('votre panier est vide')
     }
     // variable contenant le panier et le formulaire à envoyer pour la commande
-    const sendCommande = {
-        basket,
-        formulaireValues
+    const order = {
+        products,
+        contact
     }
-    console.log("sendCommande");
-    console.log(sendCommande);
-
+    
+    //envoi des données à l'API
+    fetch("http://localhost:3000/api/products/order",{
+        method: "POST",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(order),
+    })
+        .then((res) => res.json())
+        .then((data) => {
+            //redirection vers la page confirmation
+            document.location.href = `confirmation.html?orderId=${data.orderId}`;
+        console.log(data.orderId)
+        })
+        .catch((error) => {
+            alert("Un problème a été rencontré lors de l'envoi de la commande");
+            return error;
+        });
 })
+
+
+
+
+
+
+
+
 
 /* //recuperer les infos du formulaire dans le LS
 const getForm = localStorage.getItem("formulaireValues");
