@@ -19,6 +19,9 @@ fetch("http://localhost:3000/api/products")
     
   })
   .catch((error) => {
+    document.getElementById('items').textContent = "aucun produit disponible"
+    document.getElementById('items').style.color = "red"
+    document.getElementById('items').style.fontSize = "28px"
     return error;
   });
   
