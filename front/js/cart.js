@@ -84,15 +84,15 @@ function removeProduct () {
 }
 //suppression de produits dans LS
 function deleteFromBasket(product) {
-            let basket = getBasket();
-            basket = basket.filter(d => (d.id != product.id) || (d.colorChoice != product.colorChoice))
-            saveBasket(basket);
-            if(basket.length != 0){
-                location.reload()
-            }else{
-                localStorage.removeItem('basket');
-                location.reload()
-            }     
+    let basket = getBasket();
+    basket = basket.filter(d => (d.id != product.id) || (d.colorChoice != product.colorChoice))
+    saveBasket(basket);
+    if(basket.length != 0){
+        location.reload()
+    }else{
+        localStorage.removeItem('basket');
+        location.reload()
+    }     
 }
 fetch(`http://localhost:3000/api/products`)
 .then((res) => res.json())
@@ -133,7 +133,7 @@ fetch(`http://localhost:3000/api/products`)
     totalQuantityFromBasket();
 // prix total du panier
     totalPriceFromBasket();
-// sup product
+// supprimer product
     removeProduct();
 });
 
@@ -142,7 +142,7 @@ fetch(`http://localhost:3000/api/products`)
 const btnsendform = document.getElementById("order");
 btnsendform.addEventListener('click', (e) => {
     e.preventDefault();
-    // récupérer les valeurs du formulaire
+// récupérer les valeurs du formulaire
     const contact = {
         firstName : document.querySelector("#firstName").value,
         lastName : document.querySelector("#lastName").value,
@@ -150,8 +150,7 @@ btnsendform.addEventListener('click', (e) => {
         city : document.querySelector("#city").value,
         email : document.querySelector("#email").value
     }
-    
-    // controle des infos du formulaire
+// controle des infos du formulaire
     regexprenom= /^([^ ])(([A-Za-zÀ-ÿœ]{2,40})?(['.\ -]{0,5}))*$/;
     msgprenom = "Les chiffes et symboles sont interdits.Maximum 40 caractères, minimum 3 caractères";
     regexnom= /^([^ ])(([a-zA-ZÀ-ÿœ\,\'\.\ \-]{2,30}))*$/;
@@ -162,75 +161,35 @@ btnsendform.addEventListener('click', (e) => {
     msgcity = `Les chiffres et caractères spéciaux sont interdits.`;
     regexemail= /^([^ ])[a-zA-Z0-9_.+-]+@[a-zA-Z]+\.[a-z]{2,4}$/;
     msgemail = `Veuillez indiquer une adresse email valide`;
-    function checkprenom () {
-        const firstName = contact.firstName;
-        if(regexprenom.test(firstName)) {
-            document.getElementById('firstNameErrorMsg').textContent = ""
-            return true;
-        }else{
-            document.getElementById('firstNameErrorMsg').textContent = msgprenom
-            return false;
-        }
-    }
-    function checknom () {
-        const lastName = contact.lastName;
-        if(regexnom.test(lastName)) {
-            document.getElementById('lastNameErrorMsg').textContent = ""
-            return true;
-        }else{
-            document.getElementById('lastNameErrorMsg').textContent = msgnom;
-            return false;
-        }
-    }
-    function checkaddress () {
-        const address = contact.address;
-        if(regexaddress.test(address) && (address !="")) {
-            document.getElementById('addressErrorMsg').textContent = ""
-            return true;
-        }else{
-            document.getElementById('addressErrorMsg').textContent = msgaddress;
-            return false;
-        }
-    }
-    function checkcity () {
-        const city = contact.city;
-        if(regexcity.test(city) && (city !="")) {
-            document.getElementById('cityErrorMsg').textContent = ""
-            return true;
-        }else{
-            document.getElementById('cityErrorMsg').textContent = msgcity
-            return false;
-        }
-    }
-    function checkemail () {
-        const email = contact.email;
-        if(regexemail.test(email)) {
-            document.getElementById('emailErrorMsg').textContent = ""
-            return true;
-        }else{
-            document.getElementById('emailErrorMsg').textContent = msgemail;
-            return false;
-        }
-    }
-    // envoyer dans le LS si formulaire valide
-    function checkFormulaire () {
-        if(checkprenom () && checknom () && checkaddress () && checkcity() && checkemail ()) {
-            localStorage.setItem("contact", JSON.stringify(contact));
+    function checkinput (regex, msg, inputValue, inputError) {
+        if(regex.test(inputValue)) {
+            document.getElementById(inputError + 'ErrorMsg').textContent =""
             return true
-        }else{
-            alert('Vous avez une erreur dans le formalaire')
+        }else {
+            document.getElementById(inputError + 'ErrorMsg').textContent = msg
             return false
         }
     }
-    checkprenom ();
-    checknom ();
-    checkaddress ();
-    checkcity ();
-    checkemail ();
+    checkinput (regexprenom, msgprenom, contact.firstName, "firstName")
+    checkinput (regexnom, msgnom, contact.lastName, "lastName")
+    checkinput (regexaddress, msgaddress, contact.address, "address")
+    checkinput (regexcity, msgcity, contact.city, "city")
+    checkinput (regexemail, msgemail, contact.email, "email")
+// contrôle si formulaire valide
+    function checkFormulaire () {
+        if(checkinput (regexprenom,msgprenom, contact.firstName, "firstName" ) 
+        && checkinput (regexnom, msgnom, contact.lastName, "lastName" ) 
+        && checkinput (regexaddress, msgaddress, contact.address, "address") 
+        && checkinput (regexcity, msgcity, contact.city, "city") 
+        && checkinput (regexemail, msgemail, contact.email, "email")) {
+            return true
+        }else{
+            return false
+        }
+    }
     checkFormulaire ()
-    // panier des id de chaque produit choisit
+// panier des id de chaque produit choisit
     let products = []
-
     if(basket != undefined){
         for (c = 0; c < basket.length; c++){
             products.push(basket[c].id)
@@ -238,16 +197,16 @@ btnsendform.addEventListener('click', (e) => {
     }else{
         alert('votre panier est vide')
     }
-    // variable contenant le panier et le formulaire à envoyer pour la commande
+// variable contenant le panier et le formulaire à envoyer pour la commande
     const order = {
         products,
         contact
     }
+//verif conditions avant envoi de la commande
     if(basket != undefined && checkFormulaire () ){
         sendOrder()
-        console.log(products.length);
     }
-    //envoi des données à l'API
+//envoi des données à l'API
     function sendOrder () {
         fetch("http://localhost:3000/api/products/order",{
             method: "POST",
@@ -259,9 +218,8 @@ btnsendform.addEventListener('click', (e) => {
         })
         .then((res) => res.json())
         .then((data) => {
-          //redirection vers la page confirmation
+//redirection vers la page confirmation
             document.location.href = `confirmation.html?orderId=${data.orderId}`;
-        console.log(data.orderId)
         })
         .catch((error) => {
             alert("Un problème a été rencontré lors de l'envoi de la commande");
@@ -269,18 +227,3 @@ btnsendform.addEventListener('click', (e) => {
         });
     }
 })
-
-
-//recuperer les infos du formulaire dans le LS
-const getForm = localStorage.getItem("contact");
-const getFormObjet = JSON.parse(getForm);
-console.log(getFormObjet);
-//mettre les infos dans le formulaire
-function fillForm (input) {
-    document.querySelector(`#${input}`).value = getFormObjet[input];
-}
-fillForm('firstName');
-fillForm('lastName');
-fillForm('address');
-fillForm('city');
-fillForm('email');

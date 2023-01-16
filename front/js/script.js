@@ -16,7 +16,6 @@ fetch("http://localhost:3000/api/products")
     }
     //injecter l'html dans le dom
     document.querySelector('#items').innerHTML = change
-    
   })
   .catch((error) => {
     document.getElementById('items').textContent = "aucun produit disponible"
@@ -24,4 +23,3 @@ fetch("http://localhost:3000/api/products")
     document.getElementById('items').style.fontSize = "28px"
     return error;
   });
-  

@@ -1,5 +1,5 @@
 //vider le localstorage
-//localStorage.clear()
+localStorage.clear()
 //recuperation de l'url
 const queryString_url_orderId = window.location.search;
 // extraire orderId

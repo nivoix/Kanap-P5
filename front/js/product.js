@@ -39,7 +39,7 @@ function checkInput () {
     }
     let quantity = document.getElementById('quantity').value
     if(quantity < 1 || quantity > 100) {
-        document.getElementById('alertQuantity').innerHTML = 'Veuillez saisir une quantité entre 1 et 99';
+        document.getElementById('alertQuantity').innerHTML = 'Veuillez saisir une quantité entre 1 et 100';
     }else if (quantity >= 1 && quantity <= 100){
         document.getElementById('alertQuantity').innerHTML = ''
     }
@@ -70,7 +70,6 @@ function addToLocalStorage (productChoice) {
     let basket = getBasket();
     let quantity = document.getElementById('quantity').value
     let foundProductIndex = basket.findIndex((i) => i.id === id && i.colorChoice === productChoice.colorChoice);
-    console.log(foundProductIndex);
     if(foundProductIndex === -1) {
         basket.push(productChoice)
     }else if((parseInt(quantity) + parseInt(basket[foundProductIndex].quantity)) > 100){
