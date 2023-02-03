@@ -13,6 +13,7 @@ function getBasket() {
 function saveBasket(basket) {
     localStorage.setItem("basket", JSON.stringify(basket));
 }
+
 // changement de quantité d'un produit
 function changeQuantity(){
     let lastQuantity =  document.querySelectorAll(".itemQuantity");
@@ -22,14 +23,23 @@ function changeQuantity(){
             let eArticle = lastQuantity[v].closest("article");
             let eId = eArticle.getAttribute("data-id");
             let eColor = eArticle.getAttribute("data-color");
-            let product = {
-                id: eId,
-                colorChoice: eColor,
-                quantity: e.target.value
-            }
-            editProductLocalStorage(product);
-            totalQuantityFromBasket ();
-            totalPriceFromBasket();
+            console.log(e.target.value);
+                if(e.target.value < 0) {
+                    console.log(document.querySelector(".cart__item__content__settings__quantity"));
+                    let alertQuantity = `<div  id="alertQuantity" style="color:red; font-size:16px; font-weight:bold"></div>`
+                    document.querySelector(".cart__item__content__settings__quantity").insertAdjacentHTML("afterend", alertQuantity);
+                    document.getElementById('alertQuantity').innerHTML = 'Veuillez saisir une quantité entre 1 et 100';
+                } else{
+                    document.getElementById('alertQuantity').innerHTML = '';
+                    let product = {
+                        id: eId,
+                        colorChoice: eColor,
+                        quantity: e.target.value
+                    }
+                    editProductLocalStorage(product);
+                    totalQuantityFromBasket ();
+                    totalPriceFromBasket();
+                }
         });
     }
 }
@@ -102,28 +112,30 @@ fetch(`http://localhost:3000/api/products`)
         let basket = getBasket();
             for(let y = 0; y < data.length; y++){
                 if(basket[x].id === data[y]._id){
-                //prix total pour le produit en fonction de sa quantité: let totalPriceProduct = (parseInt(data[y].price) * parseInt(basket[x].quantity))
-                document.getElementById("cart__items").innerHTML +=
-                        `<article class="cart__item" data-id=${basket[x].id} data-color=${basket[x].colorChoice}>
-                            <div class="cart__item__img"><img src="${data[y].imageUrl}" alt="${data[y].description}"></div>
-                            <div class="cart__item__content">
-                                <div class="cart__item__content__description">
-                                    <h2>${data[y].name}</h2>
-                                    <p>${basket[x].colorChoice}</p>
-                                    <p>${data[y].price}€</p>
-                                </div>
-                                <div class="cart__item__content__settings">
-                                    <div class="cart__item__content__settings__quantity">
-                                        <p>Qté : </p>
-                                        <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${basket[x].quantity}">
-                                    </div>
-                                    <div class="cart__item__content__settings__delete">
-                                        <br>
-                                        <p class="deleteItem">Supprimer</p>
-                                    </div>
-                                  </div>
-                                </div>
-                              </article>`                             
+                let display = ''
+                display += `<article class="cart__item" data-id=${basket[x].id} data-color=${basket[x].colorChoice}>
+                <div class="cart__item__img"><img src="${data[y].imageUrl}" alt="${data[y].description}"></div>
+                <div class="cart__item__content">
+                    <div class="cart__item__content__description">
+                        <h2>${data[y].name}</h2>
+                        <p>${basket[x].colorChoice}</p>
+                        <p>${data[y].price}€</p>
+                    </div>
+                    <div class="cart__item__content__settings">
+                        <div class="cart__item__content__settings__quantity">
+                            <p>Qté : </p>
+                            <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${basket[x].quantity}">
+                        </div>
+                        <div class="cart__item__content__settings__delete">
+                            <br>
+                            <p class="deleteItem">Supprimer</p>
+                        </div>
+                      </div>
+                    </div>
+                  </article>`
+                document
+                    .getElementById("cart__items")
+                    .insertAdjacentHTML("afterbegin", display);        
                 }
             }
         }
