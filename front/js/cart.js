@@ -23,18 +23,17 @@ function changeQuantity(){
             let eArticle = lastQuantity[v].closest("article");
             let eId = eArticle.getAttribute("data-id");
             let eColor = eArticle.getAttribute("data-color");
-            console.log(e.target.value);
-                if(e.target.value < 0) {
-                    console.log(document.querySelector(".cart__item__content__settings__quantity"));
-                    let alertQuantity = `<div  id="alertQuantity" style="color:red; font-size:16px; font-weight:bold"></div>`
-                    document.querySelector(".cart__item__content__settings__quantity").insertAdjacentHTML("afterend", alertQuantity);
+            let alertQuantity = `<div  id="alertQuantity" style="color:red; font-size:16px; text-align:center; font-weight:bold"; ></div>`
+            document.querySelector('#cart__items').insertAdjacentHTML("beforebegin", alertQuantity);
+            let quantite = Math.floor(e.target.value)
+            if(e.target.value < 0) {
                     document.getElementById('alertQuantity').innerHTML = 'Veuillez saisir une quantité entre 1 et 100';
                 } else{
                     document.getElementById('alertQuantity').innerHTML = '';
                     let product = {
                         id: eId,
                         colorChoice: eColor,
-                        quantity: e.target.value
+                        quantity: quantite
                     }
                     editProductLocalStorage(product);
                     totalQuantityFromBasket ();
